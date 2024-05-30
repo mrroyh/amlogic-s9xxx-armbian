@@ -65,11 +65,36 @@ on:
       kernel_sign:
         description: "Set the kernel custom signature"
         required: false
-        default: "-ophub"
+        default: "-mrroyh"
         type: choice
         options:
           - -ophub
-          - -yourname
+          - -mrroyh
+      kernel_config:
+        description: "Set the path of kernel .config"
+        required: false
+        default: "compile-kernel/tools/config"
+        type: choice
+        options:
+          - compile-kernel/tools/config
+          - false
+      
+      kernel_patch:
+        description: "Set the directory for kernel patches"
+        required: false
+        default: "compile-kernel/tools/patch"
+        type: choice
+        options:
+          - compile-kernel/tools/patch
+          - false
+      auto_patch:
+        description: "Set whether to use kernel patches"
+        required: false
+        default: "true"
+        type: choice
+        options:
+          - true
+          - false
 
 env:
   TZ: America/New_York
@@ -130,12 +155,12 @@ jobs:
         run: |
           df -hT ${PWD}
           mkdir -p /builder/{kernel,output}
-          ln -sf /builder/kernel /home/runner/work/_actions/ophub/amlogic-s9xxx-armbian/main/compile-kernel/kernel
-          ln -sf /builder/output /home/runner/work/_actions/ophub/amlogic-s9xxx-armbian/main/compile-kernel/output
+          ln -sf /builder/kernel /home/runner/work/_actions/mrroyh/amlogic-s9xxx-armbian/main/compile-kernel/kernel
+          ln -sf /builder/output /home/runner/work/_actions/mrroyh/amlogic-s9xxx-armbian/main/compile-kernel/output
           echo "status=success" >> ${GITHUB_OUTPUT}
 
       - name: Compile the kernel [ ${{ inputs.kernel_version }} ]
-        uses: ophub/amlogic-s9xxx-armbian@main
+        uses: mrroyh/amlogic-s9xxx-armbian@main
         if: ${{ steps.mapped.outputs.status }} == 'success' && !cancelled()
         with:
           build_target: kernel
@@ -144,6 +169,8 @@ jobs:
           kernel_auto: ${{ inputs.kernel_auto }}
           kernel_package: ${{ inputs.kernel_package }}
           kernel_sign: ${{ inputs.kernel_sign }}
+          kernel_patch: ${{ inputs.kernel_patch }}
+          auto_patch: ${{ inputs.auto_patch }}
           kernel_toolchain: ${{ inputs.kernel_toolchain }}
           compress_format: ${{ inputs.compress_format }}
 

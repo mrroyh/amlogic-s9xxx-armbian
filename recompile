@@ -430,9 +430,6 @@ get_kernel_source() {
 
     # Remove the local version number
     rm -f ${kernel_path}/${local_kernel_path}/localversion
-
-    # Apply custom kernel patches
-    [[ "${auto_patch}" == "true" || "${auto_patch}" == "yes" ]] && apply_patch
 }
 
 chroot_armbian() {
@@ -592,6 +589,9 @@ compile_env() {
             scripts/config -d LTO_CLANG_THIN
         fi
     }
+
+    # Apply custom kernel patches
+    [[ "${auto_patch}" == "true" || "${auto_patch}" == "yes" ]] && apply_patch
 
     # Make menuconfig
     #make ${MAKE_SET_STRING} menuconfig
